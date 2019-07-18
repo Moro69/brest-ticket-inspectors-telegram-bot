@@ -16,7 +16,7 @@ public class ScheduledService {
     @Autowired
     private TelegramService telegramService;
 
-    @Scheduled(fixedDelay = 180000)
+    @Scheduled(fixedDelay = 3000)
     public void getMessagesFromVkAndSendToTelegram() throws IOException, URISyntaxException {
         List<String> messages = vkService.getVkPostsMessages();
 

@@ -13,9 +13,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -24,14 +26,27 @@ public class VkService {
     @Autowired
     private VkApiClient vkRestClient;
 
-    public List<String> getVkPostsMessages() throws IOException, URISyntaxException {
-        VkGetPostsResponse response = vkRestClient.getPosts(-72869598, 5, 0);
+    private Integer lastPostsCount;
 
+    public List<String> getVkPostsMessages() throws IOException, URISyntaxException {
+        VkGetPostsResponse response = null;
         List<String> messages = new ArrayList<>();
 
-        Optional.of(response)
+        if (Objects.nonNull(lastPostsCount)) {
+            int postsCount = vkRestClient.getPosts(-72869598, 0, 0).getCount();
+
+            if (!lastPostsCount.equals(postsCount)) {
+                response = vkRestClient.getPosts(-72869598, postsCount - lastPostsCount, 0);
+                lastPostsCount = response.getCount();
+            }
+        } else {
+            response = vkRestClient.getPosts(-72869598, 10, 0);
+            lastPostsCount = response.getCount();
+        }
+
+        Optional.ofNullable(response)
                 .map(VkGetPostsResponse::getItems)
-                .orElseThrow(() -> new RuntimeException("some error"))
+                .orElse(Collections.emptyList())
                 .stream()
                 .sorted(Comparator.comparing(VkPost::getDate))
                 .forEach(vkPost -> {
@@ -48,5 +63,23 @@ public class VkService {
 
         return messages;
     }
+
+    private int getIndexForPostId(List<VkPost> posts, int lastPostId) {
+        int index = 0;
+        for (VkPost vkPost : posts) {
+            if (vkPost.getId().equals(lastPostId)) {
+                index = posts.indexOf(vkPost);
+            }
+        }
+
+        return index;
+    }
+
+    private boolean isPostsIsUnique(List<VkPost> posts, int lastPostId) {
+        return posts.stream()
+                .map(VkPost::getId)
+                .noneMatch(id -> lastPostId == id);
+    }
+
 
 }
