@@ -1,5 +1,7 @@
-package com.moro.tibtbot.model.vk;
+package com.moro.tibtbot.model.vk.response;
 
+import com.moro.tibtbot.model.vk.VkPost;
+import com.moro.tibtbot.model.vk.VkResponse;
 import lombok.Data;
 
 import java.io.Serializable;

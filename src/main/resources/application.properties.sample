@@ -1,1 +1,2 @@
 service.token=<vk_service_token>
+telegram.bot.token=<telegram_bot_token>
