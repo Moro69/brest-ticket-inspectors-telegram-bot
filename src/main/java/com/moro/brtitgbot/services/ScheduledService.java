@@ -15,13 +15,13 @@ import java.util.List;
 public class ScheduledService {
 
     private final VkWallPostProvider vkWallPostProvider;
-    private final TelegramApiClient telegramApiClient;
+    private final TelegramService telegramService;
 
     @Autowired
     public ScheduledService(final VkWallPostProvider vkWallPostProvider,
-                            final TelegramApiClient telegramApiClient) {
+                            final TelegramService telegramService) {
         this.vkWallPostProvider = vkWallPostProvider;
-        this.telegramApiClient = telegramApiClient;
+        this.telegramService = telegramService;
     }
 
     @Scheduled(fixedDelay = 10000)
@@ -30,6 +30,6 @@ public class ScheduledService {
         List<String> postsMessages = vkWallPostProvider.getLastWallPostsMessages();
         log.info("messages received: {}", postsMessages);
 
-        telegramApiClient.sendMessages(postsMessages);
+        telegramService.sendMessages(postsMessages);
     }
 }
