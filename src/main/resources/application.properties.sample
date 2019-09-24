@@ -1,0 +1,3 @@
+vk.service.token=<your_vk_service_token>
+telegram.bot.token=<your_tg_bot_token>
+vk.group.id=<vk_group_api>
