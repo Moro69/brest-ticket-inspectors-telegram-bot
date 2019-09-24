@@ -24,7 +24,7 @@ public class ScheduledService {
         this.telegramApiClient = telegramApiClient;
     }
 
-    @Scheduled(fixedDelay = 3000)
+    @Scheduled(fixedDelay = 10000)
     public void getMessagesFromVkAndSendToTelegram() throws URISyntaxException, ClientException, ApiException {
         log.info("getMessagesFromVkAndSendToTelegram");
         List<String> postsMessages = vkWallPostProvider.getLastWallPostsMessages();
