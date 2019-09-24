@@ -1,4 +1,4 @@
+vk.client.secret=<your_client_secret>
 vk.app.id=<your_app_id>
-vk.service.token=<your_vk_service_token>
+vk.group.id=-<vk_group_id>
 telegram.bot.token=<your_tg_bot_token>
-vk.group.id=<vk_group_id>

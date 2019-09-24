@@ -15,10 +15,11 @@ public class VkConfig {
     private Integer APP_ID;
     @Value("${vk.service.token}")
     private String SERVICE_TOKEN;
+    @Value("${vk.client.secret}")
+    private String CLIENT_SECRET;
 
     @Bean
     public VkApiClient vkApiClient() {
-
         TransportClient transportClient = HttpTransportClient.getInstance();
 
         return new VkApiClient(transportClient);
@@ -26,6 +27,6 @@ public class VkConfig {
 
     @Bean
     public ServiceActor serviceActor() {
-        return new ServiceActor(APP_ID, SERVICE_TOKEN);
+        return new ServiceActor(APP_ID, CLIENT_SECRET, SERVICE_TOKEN);
     }
 }

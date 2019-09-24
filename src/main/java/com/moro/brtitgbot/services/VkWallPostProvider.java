@@ -8,6 +8,7 @@ import com.vk.api.sdk.objects.enums.WallFilter;
 import com.vk.api.sdk.objects.wall.Wallpost;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Log4j2
 public class VkWallPostProvider {
 
     private static final Integer DEFAULT_POSTS_COUNT = 10;
@@ -36,7 +38,8 @@ public class VkWallPostProvider {
     private Integer lastPostsCount;
 
     @Autowired
-    public VkWallPostProvider(final VkApiClient vkApiClient, ServiceActor serviceActor) {
+    public VkWallPostProvider(final VkApiClient vkApiClient,
+                              final ServiceActor serviceActor) {
         this.vkApiClient = vkApiClient;
         this.serviceActor = serviceActor;
     }
@@ -92,6 +95,7 @@ public class VkWallPostProvider {
         return vkApiClient.wall()
                 .get(serviceActor)
                 .ownerId(OWNER_ID)
+                .count(0)
                 .filter(WallFilter.OTHERS)
                 .execute()
                 .getCount();
