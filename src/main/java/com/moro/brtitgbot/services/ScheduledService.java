@@ -24,7 +24,8 @@ public class ScheduledService {
         this.telegramService = telegramService;
     }
 
-    @Scheduled(fixedDelay = 10000)
+    // 18000 because VK has rate limit for wall.get method - 5000 calls per day
+    @Scheduled(fixedDelay = 18000)
     public void getMessagesFromVkAndSendToTelegram() throws URISyntaxException, ClientException, ApiException {
         log.info("getMessagesFromVkAndSendToTelegram");
         List<String> postsMessages = vkWallPostProvider.getLastWallPostsMessages();
