@@ -10,10 +10,8 @@ import java.util.List;
 @Service
 public class TelegramService {
 
-    @Value("${telegram.bot.token}")
-    private String TELEGRAM_BOT_TOKEN;
-    @Value("${telegram.chat.id}")
-    private String TELEGRAM_CHAT_ID;
+    private String TELEGRAM_BOT_TOKEN = System.getenv("TELEGRAM_BOT_TOKEN");
+    private String TELEGRAM_CHAT_ID = System.getenv("TELEGRAM_CHAT_ID");
 
     private final TelegramApiClient apiClient;
 

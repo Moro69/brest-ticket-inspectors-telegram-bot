@@ -12,7 +12,6 @@
 .classpath
 .project
 .settings/
-*.properties
 .idea/
 *.iml
 *.iws
