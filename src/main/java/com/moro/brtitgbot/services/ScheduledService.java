@@ -16,15 +16,19 @@ public class ScheduledService {
 
     private final VkWallPostProvider vkWallPostProvider;
     private final TelegramService telegramService;
+    private final HerokuKeepAwakeService herokuKeepAwakeService;
 
     @Autowired
     public ScheduledService(final VkWallPostProvider vkWallPostProvider,
-                            final TelegramService telegramService) {
+                            final TelegramService telegramService,
+                            final HerokuKeepAwakeService herokuKeepAwakeService) {
         this.vkWallPostProvider = vkWallPostProvider;
         this.telegramService = telegramService;
+        this.herokuKeepAwakeService = herokuKeepAwakeService;
     }
 
-    // 18000 because VK has rate limit for wall.get method - 5000 calls per day
+    // 18000ms because VK has rate limit for wall.get method - 5000 calls per day.
+    // With that delay we will have 4800 calls per day.
     @Scheduled(fixedDelay = 18000)
     public void getMessagesFromVkAndSendToTelegram() throws URISyntaxException, ClientException, ApiException {
         log.info("getMessagesFromVkAndSendToTelegram");
@@ -32,5 +36,10 @@ public class ScheduledService {
         log.info("messages received: {}", postsMessages);
 
         telegramService.sendMessages(postsMessages);
+    }
+
+    @Scheduled(fixedDelay = 1800000)
+    public void keepHerokuAwake() {
+        herokuKeepAwakeService.keepAwake();
     }
 }
