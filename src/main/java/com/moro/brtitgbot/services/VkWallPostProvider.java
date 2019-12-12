@@ -17,7 +17,6 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -47,14 +46,14 @@ public class VkWallPostProvider {
     }
 
     public List<String> getLastWallPostsMessages() throws ClientException, ApiException {
-        log.debug("getLastWallPostsMessages: ");
+        log.info("getLastWallPostsMessages: ");
 
         int totalPostsCount = getTotalPostsCount();
 
-        log.debug("total posts count = {}", totalPostsCount);
+        log.info("total posts count = {}", totalPostsCount);
 
         if (Objects.nonNull(lastPostsCount)) {
-            log.debug("last posts count = {}", lastPostsCount);
+            log.info("last posts count = {}", lastPostsCount);
 
             if (!lastPostsCount.equals(totalPostsCount)) {
                 wallposts = getWallPosts(totalPostsCount - lastPostsCount);
@@ -86,7 +85,8 @@ public class VkWallPostProvider {
     }
 
     private List<WallpostFull> getWallPosts(Integer count) throws ApiException, ClientException {
-        log.debug("getWallPosts: count = {}", count);
+        log.info("getWallPosts: count = {}", count);
+
         GetResponse getResponse = vkApiClient.wall()
                 .get(serviceActor)
                 .ownerId(ownerId)
