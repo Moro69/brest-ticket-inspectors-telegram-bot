@@ -12,11 +12,11 @@ import org.springframework.context.annotation.Configuration;
 public class VkConfig {
 
     @Value("${vk.app.id}")
-    private Integer APP_ID;
+    private Integer appId;
     @Value("${vk.service.token}")
-    private String SERVICE_TOKEN;
+    private String serviceToken;
     @Value("${vk.client.secret}")
-    private String CLIENT_SECRET;
+    private String clientSecret;
 
     @Bean
     public VkApiClient vkApiClient() {
@@ -27,6 +27,6 @@ public class VkConfig {
 
     @Bean
     public ServiceActor serviceActor() {
-        return new ServiceActor(APP_ID, CLIENT_SECRET, SERVICE_TOKEN);
+        return new ServiceActor(appId, clientSecret, serviceToken);
     }
 }

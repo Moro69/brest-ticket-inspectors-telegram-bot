@@ -18,6 +18,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -30,12 +31,13 @@ public class VkWallPostProvider {
     private static final Integer DEFAULT_POSTS_COUNT = 10;
 
     @Value("${vk.group.id}")
-    private Integer OWNER_ID;
+    private Integer ownerId;
 
     private final VkApiClient vkApiClient;
     private final ServiceActor serviceActor;
 
     private Integer lastPostsCount;
+    private List<WallpostFull> wallposts;
 
     @Autowired
     public VkWallPostProvider(final VkApiClient vkApiClient,
@@ -45,22 +47,27 @@ public class VkWallPostProvider {
     }
 
     public List<String> getLastWallPostsMessages() throws ClientException, ApiException {
-        List<WallpostFull> messages = new ArrayList<>();
+        log.debug("getLastWallPostsMessages: ");
 
-        int postsCount = getTotalPostsCount();
+        int totalPostsCount = getTotalPostsCount();
+
+        log.debug("total posts count = {}", totalPostsCount);
 
         if (Objects.nonNull(lastPostsCount)) {
+            log.debug("last posts count = {}", lastPostsCount);
 
-            if (!lastPostsCount.equals(postsCount)) {
-                messages = getWallPosts(postsCount - lastPostsCount);
-                lastPostsCount = postsCount;
+            if (!lastPostsCount.equals(totalPostsCount)) {
+                wallposts = getWallPosts(totalPostsCount - lastPostsCount);
+                lastPostsCount = totalPostsCount;
+            } else {
+                return Collections.emptyList();
             }
         } else {
-            messages = getWallPosts(DEFAULT_POSTS_COUNT);
-            lastPostsCount = postsCount;
+            wallposts = getWallPosts(DEFAULT_POSTS_COUNT);
+            lastPostsCount = totalPostsCount;
         }
 
-        return messages.stream()
+        return wallposts.stream()
                 .sorted(Comparator.comparing(Wallpost::getDate))
                 .map(this::mapToFormattedString)
                 .collect(Collectors.toList());
@@ -73,17 +80,16 @@ public class VkWallPostProvider {
 
         String message = wallpostFull.getText();
 
-        String formattedMessage = "*"
+        return "*"
                 + postDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 + "*" + "\n" + message;
-
-        return formattedMessage;
     }
 
     private List<WallpostFull> getWallPosts(Integer count) throws ApiException, ClientException {
+        log.debug("getWallPosts: count = {}", count);
         GetResponse getResponse = vkApiClient.wall()
                 .get(serviceActor)
-                .ownerId(OWNER_ID)
+                .ownerId(ownerId)
                 .count(count)
                 .filter(WallFilter.OTHERS)
                 .execute();
@@ -94,7 +100,7 @@ public class VkWallPostProvider {
     private Integer getTotalPostsCount() throws ClientException, ApiException {
         return vkApiClient.wall()
                 .get(serviceActor)
-                .ownerId(OWNER_ID)
+                .ownerId(ownerId)
                 .count(0)
                 .filter(WallFilter.OTHERS)
                 .execute()
